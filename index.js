@@ -9,7 +9,7 @@ import { userRoutes } from "./routes/user.routes.js";
 const app = express();
 app.disable("x-powered-by");
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:3002", credentials: true }));
+app.use(cors({ origin: process.env.CORS_URL, credentials: true }));
 
 app.use(authorization, userRoutes);
 
