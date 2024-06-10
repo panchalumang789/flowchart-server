@@ -5,14 +5,13 @@ dotenv.config();
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 
-
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const getUsersMiddleware = async (req, res, next) => {
   try {
     const { data, error } = await supabase
       .from("flowchartData")
-      .select("id,name,successors")
+      .select("id,name,connection_text,successors")
       .order("id", { ascending: true });
 
     if (!error) {
@@ -22,7 +21,7 @@ const getUsersMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-    next({ error: { status: 404, message: { message: "Data Not Found!" } } });
+   next({ error: error });
   }
 };
 
@@ -30,7 +29,7 @@ const getUserMiddleware = async (req, res, next) => {
   try {
     const { data, error } = await supabase
       .from("flowchartData")
-      .select("id,name,successors")
+      .select("id,name,connection_text,successors")
       .eq("id", req.params?.id)
       .limit(1)
       .single();
@@ -42,7 +41,7 @@ const getUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-    next({ error: { status: 404, message: { message: "Data Not Found!" } } });
+   next({ error: error });
   }
 };
 
@@ -60,7 +59,7 @@ const createMultipleUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-    next({ error: { status: 404, message: { message: "Data Not Found!" } } });
+   next({ error: error });
   }
 };
 
@@ -121,7 +120,7 @@ const createUserMiddleware = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    next({ error: { status: 404, message: { message: "Data Not Found!" } } });
+   next({ error: error });
   }
 };
 
@@ -140,7 +139,7 @@ const updateUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-    next({ error: { status: 404, message: { message: "Data Not Found!" } } });
+   next({ error: error });
   }
 };
 
@@ -200,7 +199,7 @@ const deleteUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-    next({ error: { status: 404, message: { message: "Data Not Found!" } } });
+   next({ error: error });
   }
 };
 
