@@ -11,7 +11,7 @@ const getUsersMiddleware = async (req, res, next) => {
   try {
     const { data, error } = await supabase
       .from("flowchartData")
-      .select("id,name,connection_text,successors")
+      .select("id,name,connection_text,successors,guj_name")
       .order("id", { ascending: true });
 
     if (!error) {
@@ -21,7 +21,7 @@ const getUsersMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-   next({ error: error });
+    next({ error: error });
   }
 };
 
@@ -29,7 +29,7 @@ const getUserMiddleware = async (req, res, next) => {
   try {
     const { data, error } = await supabase
       .from("flowchartData")
-      .select("id,name,connection_text,successors")
+      .select("id,name,connection_text,successors,guj_name")
       .eq("id", req.params?.id)
       .limit(1)
       .single();
@@ -41,7 +41,7 @@ const getUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-   next({ error: error });
+    next({ error: error });
   }
 };
 
@@ -59,7 +59,7 @@ const createMultipleUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-   next({ error: error });
+    next({ error: error });
   }
 };
 
@@ -76,7 +76,11 @@ const createUserMiddleware = async (req, res, next) => {
       const { data, error } = await supabase
         .from("flowchartData")
         .insert([
-          { name: req.body?.name, successors: predecessorData.successors },
+          {
+            name: req.body?.name,
+            guj_name: req.body?.guj_name,
+            successors: predecessorData.successors,
+          },
         ])
         .select()
         .single();
@@ -95,7 +99,13 @@ const createUserMiddleware = async (req, res, next) => {
     } else {
       const { data, error } = await supabase
         .from("flowchartData")
-        .insert([{ name: req.body?.name, successors: req.body?.successors }])
+        .insert([
+          {
+            name: req.body?.name,
+            guj_name: req.body?.guj_name,
+            successors: req.body?.successors,
+          },
+        ])
         .select()
         .single();
 
@@ -120,7 +130,7 @@ const createUserMiddleware = async (req, res, next) => {
     }
     next();
   } catch (error) {
-   next({ error: error });
+    next({ error: error });
   }
 };
 
@@ -128,7 +138,7 @@ const updateUserMiddleware = async (req, res, next) => {
   try {
     const { data, error } = await supabase
       .from("flowchartData")
-      .update({ name: req.body?.name })
+      .update({ name: req.body?.name, guj_name: req.body?.guj_name })
       .eq("id", req.params?.id)
       .select();
 
@@ -139,7 +149,7 @@ const updateUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-   next({ error: error });
+    next({ error: error });
   }
 };
 
@@ -199,7 +209,7 @@ const deleteUserMiddleware = async (req, res, next) => {
       next({ error: error });
     }
   } catch (error) {
-   next({ error: error });
+    next({ error: error });
   }
 };
 
