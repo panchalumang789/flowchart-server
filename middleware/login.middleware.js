@@ -1,32 +1,33 @@
-import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import { prisma } from "../index.js";
 dotenv.config();
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 const loginMiddleware = async (req, res, next) => {
   try {
-    const { data, error } = await supabase
-      .from("loginData")
-      .select("id,username,password,loginTime")
-      .eq("username", req.body?.username)
-      .eq("password", req.body?.password)
-      .limit(1)
-      .single();
+    const user = await prisma.loginData.findFirst({
+      where: {
+        username: req.body?.username,
+        password: req.body?.password,
+      },
+    });
 
-    if (!error) {
-      req.locals = data;
-      const { error: updatedError } = await supabase
-        .from("loginData")
-        .update({ loginTime: [...data.loginTime, new Date().toLocaleString()] })
-        .eq("username", req.body?.username);
+    if (user) {
+      req.locals = user;
+
+      await prisma.loginData.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          loginTime: {
+            push: new Date().toLocaleString(),
+          },
+        },
+      });
 
       next();
     } else {
-      next({ error: error });
+      next({ error: "User not found or password incorrect" });
     }
   } catch (error) {
     next({ error: error });
