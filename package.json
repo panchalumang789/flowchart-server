@@ -7,7 +7,7 @@
   "scripts": {
     "build": "prisma generate",
     "start": "nodemon index.js",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma migrate deploy",
     "new:schema": "npx prisma migrate dev --create-only -n --init",
     "migrate:dev": "npx prisma migrate dev",
     "migrate:prod": "npx prisma migrate deploy",
