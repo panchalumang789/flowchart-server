@@ -6,8 +6,8 @@ dotenv.config();
 import { PrismaClient } from "@prisma/client";
 export const prisma = new PrismaClient();
 
-import { authorization } from "./routes/login.routes.js";
-import { userRoutes } from "./routes/user.routes.js";
+import { authorization } from "../routes/login.routes.js";
+import { userRoutes } from "../routes/user.routes.js";
 
 const app = express();
 app.disable("x-powered-by");

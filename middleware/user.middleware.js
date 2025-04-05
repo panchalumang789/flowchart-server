@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { prisma } from "../index.js";
+import { prisma } from "../api/index.js";
 dotenv.config();
 
 const getUsersMiddleware = async (req, res, next) => {
