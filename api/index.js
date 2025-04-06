@@ -20,30 +20,24 @@ app.use(express.json());
 //     allowedHeaders: ["Content-Type"],
 //   })
 // );
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-  }),
-  function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept"
-    );
-    res.header("Access-Control-Allow-Credentials", true);
-    next();
-  }
-);
+app.use(cors());
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
+// Routes
 app.use(authorization, userRoutes);
 
+// Error Handling
 app.use((error, req, res, next) => {
-  console.log("error==>", error);
-  res.status(error.status || 500).send({ message: error.error });
+  console.error("error =>", error);
+  res
+    .status(error.status || 500)
+    .send({ message: error.error || "Internal Error" });
 });
 
 // Running server
