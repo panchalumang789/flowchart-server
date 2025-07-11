@@ -57,7 +57,7 @@ const createMultipleUserMiddleware = async (req, res, next) => {
 
 const createUserMiddleware = async (req, res, next) => {
   try {
-    if (req.body?.transferChilds && req.body?.predecessor) {
+    if (req.body?.transferChilds) {
       const predecessorData = await prisma.flowchartData.findUnique({
         where: { id: parseInt(req.body?.predecessor) },
         select: { successors: true },
@@ -68,19 +68,8 @@ const createUserMiddleware = async (req, res, next) => {
           name: req.body?.name,
           guj_name: req.body?.guj_name,
           successors: predecessorData.successors,
-          connection_text: req.body?.connection_text,
-          parent: parseInt(req.body?.parent),
         },
       });
-
-      await Promise.all(
-        predecessorData.successors.map(async (successorId) => {
-          await prisma.flowchartData.update({
-            where: { id: parseInt(successorId) },
-            data: { parent: data.id },
-          });
-        })
-      );
 
       await prisma.flowchartData.update({
         where: { id: parseInt(req.body?.predecessor) },
@@ -95,24 +84,20 @@ const createUserMiddleware = async (req, res, next) => {
           name: req.body?.name,
           guj_name: req.body?.guj_name,
           successors: req.body?.successors,
-          connection_text: req.body?.connection_text,
-          parent: parseInt(req.body?.parent),
         },
       });
 
-      if (req.body?.predecessor) {
-        const predecessorData = await prisma.flowchartData.findUnique({
-          where: { id: parseInt(req.body?.predecessor) },
-          select: { successors: true },
-        });
+      const predecessorData = await prisma.flowchartData.findUnique({
+        where: { id: parseInt(req.body?.predecessor) },
+        select: { successors: true },
+      });
 
-        await prisma.flowchartData.update({
-          where: { id: parseInt(req.body?.predecessor) },
-          data: {
-            successors: [...predecessorData.successors, data.id],
-          },
-        });
-      }
+      await prisma.flowchartData.update({
+        where: { id: parseInt(req.body?.predecessor) },
+        data: {
+          successors: [...predecessorData.successors, data.id],
+        },
+      });
 
       req.locals = data;
       next();
@@ -129,7 +114,6 @@ const updateUserMiddleware = async (req, res, next) => {
       data: {
         name: req.body?.name,
         guj_name: req.body?.guj_name,
-        parent: parseInt(req.body?.parent),
       },
     });
 
