@@ -5,6 +5,7 @@ CREATE TABLE "flowchartData" (
     "guj_name" TEXT NOT NULL,
     "connection_text" TEXT,
     "successors" INTEGER[],
+    "parent" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
