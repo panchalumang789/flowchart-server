@@ -1,3 +1,4 @@
+import { json } from "micro";
 import {
   getUsersMiddleware,
   getUserMiddleware,
@@ -8,6 +9,10 @@ import {
 } from "../middleware/user.middleware.js";
 
 export default async function handler(req, res) {
+  if (["POST", "PUT"].includes(req.method)) {
+    req.body = await json(req);
+  }
+
   const { method, url } = req;
 
   // /api/users (GET, POST)
